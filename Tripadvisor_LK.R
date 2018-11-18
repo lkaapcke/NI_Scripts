@@ -76,6 +76,7 @@ hotel_url <- read_html(url_1)
 # Template:  <- html_nodes(hotel_url,'') and  <- html_text()
 
 amenities_html <- html_nodes(hotel_url,'.is-6-desktop .textitem')
+unavailable_html <- html_nodes(hotel_url,'.is-6-desktop .unavailable')
 hotel_class_html <- html_nodes(hotel_url,'.HighlightedAmenities__amenityItem--Lh1nP div')
 number_rms_html <- html_nodes(hotel_url,'.sub_content:nth-child(9) .textitem')
 price_range_html <- html_nodes(hotel_url,'.sub_content:nth-child(11) .textitem')
@@ -84,6 +85,9 @@ amenities <- html_text(amenities_html) # Give list of amenities, but can't tell 
 hotel_class <- html_text(hotel_class_html)
 number_rms <- html_text(number_rms_html)
 price_range <- html_text(price_range_html)
+unavailable_amenities <- html_text(unavailable_html)
+unavailable_amenities
+price_range
 
 
 
