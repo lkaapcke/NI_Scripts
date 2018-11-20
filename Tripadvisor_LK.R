@@ -99,11 +99,14 @@ hotel_rooms <- substr(hotel_info, regexpr('Number of rooms', hotel_info)+15, reg
 price_range <- substr(hotel_info, regexpr('Price range', hotel_info)+12, regexpr('Price range', hotel_info)+23)
 price_range
 
+low_price <- trimws(substr(price_range, 0, regexpr('-', price_range)-1), which = "both")
+low_price
+
+high_price <- trimws(substr(price_range, regexpr('-', price_range)+3, regexpr('-', price_range)+6), which = "both")
+high_price
 
 
-rooms_html <- html_nodes(hotel_url, '.sub_title:"Number of Rooms" , .sub_content .textitem')
-rooms <- html_text(rooms_html)
-rooms
+
 
 #amenities
 #unavailable_amenities
