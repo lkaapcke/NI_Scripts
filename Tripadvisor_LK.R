@@ -5,6 +5,7 @@
 library(tidyverse)
 library(rvest)
 library(magrittr)
+library(stringr)
 
 # URL we want to scrape
 #url <- 'https://www.tripadvisor.com/Hotels-g34439-oa0-Miami_Beach_Florida-Hotels.html'
@@ -74,36 +75,42 @@ url_1 <- paste("https://www.tripadvisor.com/Hotel_Review-g34439-d1811881-Reviews
 # Read the HTML code from the site
 hotel_url <- read_html(url_1)
 
-# Template:  <- html_nodes(hotel_url,'') and  <- html_text()
-
 amenities_html <- html_nodes(hotel_url,'.is-6-desktop .textitem')
 unavailable_html <- html_nodes(hotel_url,'.is-6-desktop .unavailable')
-hotel_class_html <- html_nodes(hotel_url,'.prw_common_info_bubble+ .sub_content')
-number_rms_html <- html_nodes(hotel_url,'.sub_content:nth-child(9) .textitem')
+#hotel_class_html <- html_nodes(hotel_url,'.prw_common_info_bubble+ .sub_content')
+#number_rms_html <- html_nodes(hotel_url,'.sub_content:nth-child(9) .textitem')
 price_range_html <- html_nodes(hotel_url,'.sub_content:nth-child(11) .textitem')
 rating_html <- html_nodes(hotel_url,'.overallRating')
 hotel_info_html <- html_nodes(hotel_url, '.is-shown-at-desktop .section_content')
 
-amenities <- html_text(amenities_html) # Give list of amenities, but can't tell which ones hotel actually has
+amenities <- html_text(amenities_html) # Give list of amenities, but includes amenities a hotel doesn't have
 unavailable_amenities <- html_text(unavailable_html)
 hotel_class <- html_text(hotel_class_html)
-number_rms <- html_text(number_rms_html) 
-price_range <- html_text(price_range_html)
+#number_rms <- html_text(number_rms_html) 
+#price_range <- html_text(price_range_html)
 rating <- html_text(rating_html)
-hotel_info <- html_text(hotel_info_html)
 
+# Extract Number of rooms and Price range from hotel info
+hotel_info <- html_text(hotel_info_html)
 hotel_info
+
+hotel_rooms <- substr(hotel_info, regexpr('Number of rooms', hotel_info)+15, regexpr('Number of rooms', hotel_info)+18)
+
+price_range <- substr(hotel_info, regexpr('Price range', hotel_info)+12, regexpr('Price range', hotel_info)+23)
+price_range
+
+
 
 rooms_html <- html_nodes(hotel_url, '.sub_title:"Number of Rooms" , .sub_content .textitem')
 rooms <- html_text(rooms_html)
 rooms
 
-amenities #good
-#unavailable_amenities #good
-hotel_class #edit
+#amenities
+#unavailable_amenities
+#hotel_class #edit
 #number_rms #edit
 #price_range #edit
-#rating #good
+#rating
 
 
 
