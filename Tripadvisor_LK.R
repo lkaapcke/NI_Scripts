@@ -92,30 +92,31 @@ rating <- html_text(rating_html)
 hotel_info <- html_text(hotel_info_html)
 hotel_info
 
+# Extract string containing number of hotel rooms
+
 hotel_rooms <- substr(hotel_info, regexpr('Number of rooms', hotel_info)+15, regexpr('Number of rooms', hotel_info)+18)
+
+# Isolate the number and change to numeric
+number_rooms <- as.numeric(substr(hotel_rooms, 0, regexpr('P', hotel_rooms)-1))
+
+# Extract lower and upper price range
 
 price_range <- substr(hotel_info, regexpr('Price range', hotel_info)+12, regexpr('Price range', hotel_info)+23)
 price_range
 
 # Extract low and high price from the price range
-# TO DO: Check that this works for hotels with any price
+# TO DO: Check that this works for hotels with any price (it should)
 
 str_split(price_range, " ")
 low_price <- as.numeric(str_split(price_range, " ")[[1]][1])
 low_price
 
-high_price <- gsub(",", "", substr(str_split(price_range, " ")[[1]][3], 2, 10))
+high_price <- as.numeric(gsub(",", "", substr(str_split(price_range, " ")[[1]][3], 2, 10)))
 high_price
+class(high_price)
 
 #amenities
 #unavailable_amenities
 #hotel_class #edit
 #rating
-
-
-
-
-
-
-
 
