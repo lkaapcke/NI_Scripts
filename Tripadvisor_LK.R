@@ -70,7 +70,7 @@ library(stringr)
 
 #Scrape data for an individual hotel
 
-url_1 <- paste("https://www.tripadvisor.com/Hotel_Review-g34439-d209406-Reviews-The_Ritz_Carlton_South_Beach-Miami_Beach_Florida.html", sep ="")
+url_1 <- paste("https://www.tripadvisor.com/Hotel_Review-g34439-d247106-Reviews-SBH_South_Beach_Hotel-Miami_Beach_Florida.html", sep ="")
 
 # Read the HTML code from the site
 hotel_url <- read_html(url_1)
@@ -90,7 +90,7 @@ rating <- html_text(rating_html)
 
 # Extract Number of rooms and Price range from hotel info
 hotel_info <- html_text(hotel_info_html)
-#hotel_info
+hotel_info
 
 # Extract string containing number of hotel rooms
 
@@ -118,4 +118,45 @@ high_price <- as.numeric(gsub(",", "", substr(str_split(price_range, " ")[[1]][3
 #unavailable_amenities
 #hotel_class #edit
 #rating
+
+# Edited price code from JC that only extracts digits 
+
+char <- c("Price Range $58 - $120Room Type", "Price Range $57 - $1200Room Type")
+
+low_price <- as.numeric(str_extract(string = char,
+                                    pattern = "[:digit:]+"))
+
+high_price <- as.numeric(str_extract(str = str_extract(string = char,
+                                                       pattern = "-[:blank:]\\$[:digit:]+"), pattern = "[:digit:]+"))
+
+# class = ui_star_rating star_50
+
+class_html <- html_nodes(hotel_url,'.ui_star_rating')
+class_text <- html_text(class_html)
+class_text
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
