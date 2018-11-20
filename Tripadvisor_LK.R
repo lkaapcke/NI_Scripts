@@ -70,7 +70,7 @@ library(stringr)
 
 #Scrape data for an individual hotel
 
-url_1 <- paste("https://www.tripadvisor.com/Hotel_Review-g34439-d1811881-Reviews-Leslie_Hotel-Miami_Beach_Florida.html", sep ="")
+url_1 <- paste("https://www.tripadvisor.com/Hotel_Review-g34439-d209406-Reviews-The_Ritz_Carlton_South_Beach-Miami_Beach_Florida.html", sep ="")
 
 # Read the HTML code from the site
 hotel_url <- read_html(url_1)
@@ -78,8 +78,6 @@ hotel_url <- read_html(url_1)
 amenities_html <- html_nodes(hotel_url,'.is-6-desktop .textitem')
 unavailable_html <- html_nodes(hotel_url,'.is-6-desktop .unavailable')
 #hotel_class_html <- html_nodes(hotel_url,'.prw_common_info_bubble+ .sub_content')
-#number_rms_html <- html_nodes(hotel_url,'.sub_content:nth-child(9) .textitem')
-price_range_html <- html_nodes(hotel_url,'.sub_content:nth-child(11) .textitem')
 rating_html <- html_nodes(hotel_url,'.overallRating')
 hotel_info_html <- html_nodes(hotel_url, '.is-shown-at-desktop .section_content')
 
@@ -99,20 +97,19 @@ hotel_rooms <- substr(hotel_info, regexpr('Number of rooms', hotel_info)+15, reg
 price_range <- substr(hotel_info, regexpr('Price range', hotel_info)+12, regexpr('Price range', hotel_info)+23)
 price_range
 
-low_price <- trimws(substr(price_range, 0, regexpr('-', price_range)-1), which = "both")
+# Extract low and high price from the price range
+# TO DO: Check that this works for hotels with any price
+
+str_split(price_range, " ")
+low_price <- as.numeric(str_split(price_range, " ")[[1]][1])
 low_price
 
-high_price <- trimws(substr(price_range, regexpr('-', price_range)+3, regexpr('-', price_range)+6), which = "both")
+high_price <- gsub(",", "", substr(str_split(price_range, " ")[[1]][3], 2, 10))
 high_price
-
-
-
 
 #amenities
 #unavailable_amenities
 #hotel_class #edit
-#number_rms #edit
-#price_range #edit
 #rating
 
 
