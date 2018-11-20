@@ -75,22 +75,22 @@ url_1 <- paste("https://www.tripadvisor.com/Hotel_Review-g34439-d209406-Reviews-
 # Read the HTML code from the site
 hotel_url <- read_html(url_1)
 
+name_html <- html_nodes(hotel_url, '#HEADING')
 amenities_html <- html_nodes(hotel_url,'.is-6-desktop .textitem')
 unavailable_html <- html_nodes(hotel_url,'.is-6-desktop .unavailable')
 #hotel_class_html <- html_nodes(hotel_url,'.prw_common_info_bubble+ .sub_content')
 rating_html <- html_nodes(hotel_url,'.overallRating')
 hotel_info_html <- html_nodes(hotel_url, '.is-shown-at-desktop .section_content')
 
+hotel_name <- html_text(name_html)
 amenities <- html_text(amenities_html) # Give list of amenities, but includes amenities a hotel doesn't have
 unavailable_amenities <- html_text(unavailable_html)
 hotel_class <- html_text(hotel_class_html)
-#number_rms <- html_text(number_rms_html) 
-#price_range <- html_text(price_range_html)
 rating <- html_text(rating_html)
 
 # Extract Number of rooms and Price range from hotel info
 hotel_info <- html_text(hotel_info_html)
-hotel_info
+#hotel_info
 
 # Extract string containing number of hotel rooms
 
@@ -102,18 +102,17 @@ number_rooms <- as.numeric(substr(hotel_rooms, 0, regexpr('P', hotel_rooms)-1))
 # Extract lower and upper price range
 
 price_range <- substr(hotel_info, regexpr('Price range', hotel_info)+12, regexpr('Price range', hotel_info)+23)
-price_range
+#price_range
 
 # Extract low and high price from the price range
 # TO DO: Check that this works for hotels with any price (it should)
 
 str_split(price_range, " ")
 low_price <- as.numeric(str_split(price_range, " ")[[1]][1])
-low_price
+#low_price
 
 high_price <- as.numeric(gsub(",", "", substr(str_split(price_range, " ")[[1]][3], 2, 10)))
-high_price
-class(high_price)
+#high_price
 
 #amenities
 #unavailable_amenities
