@@ -1,50 +1,52 @@
 ## Tripadvisor Script to gather URLs
-## Code without loop
+## Goal: Get script to collect URLs and put in a df
 
 ## Load libraries
 library(tidyverse)
 library(rvest)
 library(magrittr)
 library(stringr)
+#library(Rcrawler)
 
 # URL we want to scrape
-#url <- 'https://www.tripadvisor.com/Hotels-g34439-oa0-Miami_Beach_Florida-Hotels.html'
+url <- 'https://www.tripadvisor.com/Hotels-g34439-oa0-Miami_Beach_Florida-Hotels.html'
 
 # Read the HTML code from the site
-#webpage <- read_html(url)
+webpage <- read_html(url)
 
 # Number of results pages
-#last_html <- html_nodes(webpage,'.last')
+last_html <- html_nodes(webpage,'.last')
 
-#Convert to a number
-#last_text <- html_text(last_html)
-#last_page <- as.numeric(last_text)
-#last_page
+# Convert to a number
+last_text <- html_text(last_html)
+last_page <- as.numeric(last_text)
+last_page
+
+# Try using Rcrawler?
+#Rcrawler(Website = "https://www.tripadvisor.com/Hotels-g34439-Miami_Beach_Florida-Hotels.html", no_cores = 4, no_conn = 4)
 
 # Write a loop to find this information for all pages
 
 # Define empty DF
 
-#hotel_info_df <- data.frame(HotelName = NA,
-#NumberReviews = NA,
-#Price = NA)
 
-#for (page in 1:last_page) {
+
+hotel_urls_df <- data.frame(Hotel_URL = NA)
+
+for (page in 1:last_page) {
 
 # Iterate URL
-#url <- paste("https://www.tripadvisor.com/Hotels-g34439-oa",(page-1)*30,"-Miami_Beach_Florida-Hotels.html", sep ="")
+url <- paste("https://www.tripadvisor.com/Hotels-g34439-oa",(page-1)*30,"-Miami_Beach_Florida-Hotels.html", sep ="")
 
 # Read the HTML code from the site
-#webpage <- read_html(url)
+webpage <- read_html(url)
 
 # Number of results pages
-#last_html <- html_nodes(webpage,'.last')
+last_html <- html_nodes(webpage,'.last')
 
-# Now what data to scrape? Hotel name, review count, hotel price, rating
+# Collect URL
 #hotel_names_html <- html_nodes(webpage,'.prominent')
-#hotel_review_count_html <- html_nodes(webpage, '.review_count')
-#hotel_prices_html <- html_nodes(webpage, '.price-wrap .price')
-#hotel_ratings_html <- html_nodes(webpage,'.ui_bubble_rating') Script cannot scrape this   because it is a picture
+#hotel_url_html <- html_nodes(webpage,)
 
 # Now convert to text
 #hotel_names <- html_text(hotel_names_html)
