@@ -42,19 +42,62 @@ for (page in 1:last_page) {
   
   # Number of results pages
   last_html <- html_nodes(webpage,'.last')
+  last_html
   
   #Read the URLs for each hotel from the page
   urls_html <- webpage %>%
     html_nodes(".prominent") %>% 
     html_attr('href')
   
-  hotel_urls_df <- data.frame(Hotel_URL = urls_html)
+  urls_df <- as.data.frame(urls_html)
+  hotel_urls_list[[page]] <- urls_df
   
-  hotel_urls_df_page <- data.frame(Hotel_URL = urls_html)
+  #hotel_urls_df_page <- data.frame(Hotel_URL = urls_html)
   
-  hotel_urls_df <- rbind(hotel_urls_df, hotel_urls_df_page)
+  #hotel_urls_df <- rbind(hotel_urls_df, hotel_urls_df_page)
 }
 
-hotel_urls_df <- drop_na(hotel_urls_df)
+hotel_urls_df = do.call(rbind,hotel_urls_list)
 View(hotel_urls_df)
+
+#hotel_urls_df <- drop_na(hotel_urls_df)
+#View(hotel_urls_df)
+
+# Trying way on this page: https://stackoverflow.com/questions/29402528/append-data-frames-together-in-a-for-loop
+
+mylist = list()
+
+for(i in 1:last_page) {
+  
+  # Iterate URL
+  url <- paste("https://www.tripadvisor.com/Hotels-g34439-oa",(page-1)*30,"-Miami_Beach_Florida-Hotels.html", sep ="")
+  
+  # Read code from the site
+  webpage <- read_html(url)
+  
+  #Read the URLs for each hotel from the page
+  crawl <- webpage %>%
+    html_nodes(".prominent") %>% 
+    html_attr('href')
+  
+  crawl <- data.frame(URL = crawl)
+  #View(crawl)
+  crawl$i <- i
+  link_list[[i]] <- crawl
+  View(link_list)
+  
+}
+
+links = do.call(cbind, crawl)
+View(links)
+ 
+
+
+
+
+
+
+
+
+
 
