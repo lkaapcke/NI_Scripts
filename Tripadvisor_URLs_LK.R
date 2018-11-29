@@ -25,6 +25,7 @@ last_page
 urls_html <- webpage %>%
     html_nodes(".prominent") %>% 
     html_attr('href')
+urls_html
 
 # Write a loop to record this information for all pages
 #Define empty DF
