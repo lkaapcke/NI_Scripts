@@ -53,7 +53,11 @@ for (page in 1:last_page) {
 urls_df <- drop_na(blank_df)
 View(urls_df)
 
+#complete_urls_df <- data.frame(Complete_URL = paste(urls_df$Hotel_URL, "https://www.tripadvisor.com", sep = ""))
+#View(complete_urls_df)
+
 # To do: concatenate every row with the beginning of the url
+# Try looking here: https://stackoverflow.com/questions/13944078/concatenate-rows-of-a-data-frame
 
 
 
