@@ -1,5 +1,4 @@
 ## Tripadvisor Script to gather URLs
-## Goal: Get script to collect URLs and put in a df
 
 ## Load libraries
 library(tidyverse)
@@ -9,6 +8,12 @@ library(stringr)
 
 # URL we want to scrape
 url <- 'https://www.tripadvisor.com/Hotels-g34439-oa0-Miami_Beach_Florida-Hotels.html'
+
+# Split the URL before the page iterator
+beg_url <- "https://www.tripadvisor.com/Hotels-g34439-oa"
+
+# And after the page iterator
+end_url <- "-Miami_Beach_Florida-Hotels.html"
 
 # Read the HTML code from the site
 webpage <- read_html(url)
@@ -27,8 +32,7 @@ blank_df <- data.frame(Hotel_URL = NA)
 for (page in 1:last_page) {
   
   # Iterate URL
-  url <- paste("https://www.tripadvisor.com/Hotels-g34439-oa",(page-1)*30,"-Miami_Beach_Florida-Hotels.html", sep ="")
-  url
+  url <- paste(beg_url, (page-1)*30, end_url, sep ="")
   
   # Read code from the site
   webpage <- read_html(url)
@@ -50,9 +54,9 @@ for (page in 1:last_page) {
 }
 
 urls_df <- drop_na(blank_df)
-View(urls_df)
+#View(urls_df)
 
-# Concatenate every row to create the complete URL
+# Concatenate every row to create the complete URL and put that in a new df
 
 all_urls <- data.frame(Complete_URL = NA)
 
@@ -66,5 +70,10 @@ for (row in 1:nrow(urls_df)) {
 }
 
 all_urls <- drop_na(all_urls)
+
+# Export a CSV with the URLs you need
 write.csv(all_urls, file = "All_URLS.csv")
+
+# To Dos:
+# Make this into a function that returns a df (and/or csv)
 
