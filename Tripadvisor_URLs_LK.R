@@ -6,7 +6,6 @@ library(tidyverse)
 library(rvest)
 library(magrittr)
 library(stringr)
-library(rlist)
 
 # URL we want to scrape
 url <- 'https://www.tripadvisor.com/Hotels-g34439-oa0-Miami_Beach_Florida-Hotels.html'
@@ -53,17 +52,19 @@ for (page in 1:last_page) {
 urls_df <- drop_na(blank_df)
 View(urls_df)
 
-#complete_urls_df <- data.frame(Complete_URL = paste(urls_df$Hotel_URL, "https://www.tripadvisor.com", sep = ""))
-#View(complete_urls_df)
+# Concatenate every row to create the complete URL
 
-# To do: concatenate every row with the beginning of the url
-# Try looking here: https://stackoverflow.com/questions/13944078/concatenate-rows-of-a-data-frame
+all_urls <- data.frame(Complete_URL = NA)
 
+for (row in 1:nrow(urls_df)) {
+  url <- urls_df[row, "Hotel_URL"]
+  
+  complete_url <- paste("https://www.tripadvisor.com", url, sep = "")
+  
+  whole_url <- data.frame(Complete_URL = complete_url)
+  all_urls <- rbind(all_urls, whole_url)
+}
 
-
-
-
-
-
-
+all_urls <- drop_na(all_urls)
+write.csv(all_urls, file = "All_URLS.csv")
 
