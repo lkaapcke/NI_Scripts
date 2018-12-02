@@ -41,14 +41,15 @@ stars <- as.character(html_nodes(hotel_url, '.is-6+ .is-6 .hotels-hotel-review-a
 # Extract hotel class
 hotel_class <- paste(substr(str_extract(stars, pattern = "_[:digit:]+"), 2, 2), ".", substr(str_extract(stars, pattern = "_[:digit:]+"), 3, 3), sep = "")
 
+
+
+
+
+
 # To Do:
 # Scrape amenities
 # Put everthing into a df
 # Create loop to do this to every URL in a different df
-
-
-
-
 
 ################### Below: broken amenities scraping (old TA interface)
 
@@ -60,17 +61,3 @@ hotel_class <- paste(substr(str_extract(stars, pattern = "_[:digit:]+"), 2, 2), 
 
 #unavail_amenities <- html_text(html_nodes(hotel_url,'.is-6-desktop .unavailable'))
 #unavail_amenities
-
-
-
-
-
-
-
-
-
-
-
-
-
-
