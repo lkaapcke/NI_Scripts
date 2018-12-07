@@ -1,63 +1,91 @@
-## Tripadvisor Script for an individual hotel page
+## Tripadvisor Script
 ## Code without loop
 
 ## Load libraries
 library(tidyverse)
 library(rvest)
-library(magrittr)
-library(stringr)
+
+# URL we want to scrape
+url <- 'https://www.tripadvisor.com/Hotels-g34439-oa0-Miami_Beach_Florida-Hotels.html'
+
+# Read the HTML code from the site
+webpage <- read_html(url)
+
+# Number of results pages
+last_html <- html_nodes(webpage,'.last')
+
+#Convert to a number
+last_text <- html_text(last_html)
+last_page <- as.numeric(last_text)
+#last_page
+
+# Write a loop to find this information for all pages
+
+# Define empty DF
+
+hotel_info_df <- data.frame(HotelName = NA,
+                            NumberReviews = NA,
+                            Price = NA)
+
+for (page in 1:last_page) {
+  
+  # Iterate URL
+  url <- paste("https://www.tripadvisor.com/Hotels-g34439-oa",(page-1)*30,"-Miami_Beach_Florida-Hotels.html", sep ="")
+  
+  # Read the HTML code from the site
+  webpage <- read_html(url)
+  
+  # Number of results pages
+  last_html <- html_nodes(webpage,'.last')
+  
+  # Now what data to scrape? Hotel name, review count, hotel price, rating
+  hotel_names_html <- html_nodes(webpage,'.prominent')
+  hotel_review_count_html <- html_nodes(webpage, '.review_count')
+  hotel_prices_html <- html_nodes(webpage, '.price-wrap .price')
+  #hotel_ratings_html <- html_nodes(webpage,'.ui_bubble_rating') Script cannot scrape this   because it is a picture
+  
+  # Now convert to text
+  hotel_names <- html_text(hotel_names_html)
+  hotel_review_counts <- html_text(hotel_review_count_html)
+  hotel_prices <- html_text(hotel_prices_html)
+  hotel_prices_full <- c(hotel_prices, rep(NA, length(hotel_names) - length(hotel_prices)))
+  #hotel_ratings <- html_text(hotel_ratings_html)
+  
+  # Combine data into a dataframe
+  #hotel_info_df <- data.frame(HotelName = hotel_names, NumberReviews = hotel_review_counts, Price = hotel_prices)
+  #hotel_info_df
+  
+  hotel_info_df_page <- data.frame(HotelName = hotel_names,
+                                   NumberReviews = hotel_review_counts,
+                                   Price = hotel_prices_full)
+  
+  hotel_info_df <- rbind(hotel_info_df, hotel_info_df_page)
+}
+
+hotel_info_df <- drop_na(hotel_info_df)
+View(hotel_info_df)
+
 
 #Scrape data for an individual hotel
-url_1 <- paste("https://www.tripadvisor.com/Hotel_Review-g34439-d1201317-Reviews-Riviera_Hotel_Suites_South_Beach-Miami_Beach_Florida.html", sep ="")
+
+url_1 <- paste("https://www.tripadvisor.com/Hotel_Review-g34439-d209721-Reviews-Beach_Park_Hotel-Miami_Beach_Florida.html", sep ="")
 
 # Read the HTML code from the site
 hotel_url <- read_html(url_1)
 
-# Pull hotel name
-name <- html_text(html_nodes(hotel_url, '#HEADING'))
+# Template:  <- html_nodes(hotel_url,'') and  <- html_text()
 
-# Pull hotel address
-address_info <- html_text(html_nodes(hotel_url, '.public-business-listing-ContactInfo__nonWebLink--1EqMn span'))
-address <- address_info[1]
+amenities_html <- html_nodes(hotel_url,'.is-6-desktop .textitem')
+hotel_class_html <- html_nodes(hotel_url,'.HighlightedAmenities__amenityItem--Lh1nP div')
+number_rms_html <- html_nodes(hotel_url,'.sub_content:nth-child(9) .textitem')
+price_range_html <- html_nodes(hotel_url,'.sub_content:nth-child(11) .textitem')
 
-# Pull hotel address
-rating <- str_trim(html_text(html_nodes(hotel_url,'.hotels-hotel-review-about-with-photos-Reviews__overallRating--3cjYf')), side = "both")
-
-# Scrape info from bottom of page to mine for prices and number of rooms
-more_info <- html_text(html_nodes(hotel_url, '.hotels-hotel-review-layout-Section__plain--1HV0a'))
-
-# Extract prices
-price_low <- as.numeric(str_extract(str = more_info, pattern = "[:digit:]+"))
-price_high <- as.numeric(str_extract(str = str_extract(string = more_info, 
-                                                       pattern = "-[:blank:]\\$[:digit:]+"),
-                                     pattern = "[:digit:]+"))
-
-#Extract number of rooms
-num_rooms <- as.numeric(str_extract(str = substr(more_info, nchar(more_info)-6, nchar(more_info)), pattern = "[:digit:]+"))
-
-# Scrape for matching nodes, the third one contains hotel class data
-stars <- as.character(html_nodes(hotel_url, '.is-6+ .is-6 .hotels-hotel-review-about-with-photos-layout-TextItem__textitem--3CMuR')[3])
-
-# Extract hotel class
-hotel_class <- paste(substr(str_extract(stars, pattern = "_[:digit:]+"), 2, 2), ".", substr(str_extract(stars, pattern = "_[:digit:]+"), 3, 3), sep = "")
+amenities <- html_text(amenities_html) # Give list of amenities, but can't tell which ones hotel actually has
+hotel_class <- html_text(hotel_class_html)
+number_rms <- html_text(number_rms_html)
+price_range <- html_text(price_range_html)
 
 
 
 
 
-
-# To Do:
-# Scrape amenities
-# Put everthing into a df
-# Create loop to do this to every URL in a different df
-
-################### Below: broken amenities scraping (old TA interface)
-
-#amenities <- html_text(html_nodes(hotel_url,'.is-6-desktop .textitem'))
-#amenities <- html_text(html_nodes(hotel_url, ".hotels-hotel-review-about-with-photos-layout-Group__group--KGq7E:nth-child(1) .hotels-hotel-review-about-with-photos-AmenityGroup__amenitiesList--1kgjY"))
-#amenities
-#amenities <- html_text(html_nodes(hotel_url, '.hotels-hotel-review-about-with-photos-AmenitiesModal__group--1PHad'))
-#amenities
-
-#unavail_amenities <- html_text(html_nodes(hotel_url,'.is-6-desktop .unavailable'))
-#unavail_amenities
