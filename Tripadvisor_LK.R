@@ -61,6 +61,7 @@ View(hotel_scrape)
 
 # To Do:
 # Scrape amenities
+# Separate amenities into columns
 # Put everthing into a df
 # Create loop to do this to every URL in a different df
 
