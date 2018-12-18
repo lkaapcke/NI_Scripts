@@ -21,25 +21,33 @@ address_info <- html_text(html_nodes(hotel_url, '.public-business-listing-Contac
 address <- address_info[1]
 
 # Pull hotel rating
-rating <- as.numeric(str_trim(html_text(html_nodes(hotel_url,'.overallRating')), side = "both"))
+rating <- as.numeric(str_trim(html_text(html_nodes(hotel_url,'hotels-hotel-review-about-with-photos-Reviews__rating--kVNDL')), side = "both"))
+rating
+
+html_text(html_nodes(hotel_url,'hotels-hotel-review-about-with-photos-Reviews__rating--kVNDL'))
 
 # Scrape info from bottom of page to mine for prices and number of rooms
 more_info <- html_text(html_nodes(hotel_url, '.ui_section'))
+more_info
 
 # Extract prices
 price_low <- as.numeric(str_extract(str = more_info, pattern = "[:digit:]+"))
 price_high <- as.numeric(str_extract(str = str_extract(string = more_info, 
                                                        pattern = "-[:blank:]\\$[:digit:]+"),
                                      pattern = "[:digit:]+"))
+price_low
+price_high
 
 #Extract number of rooms
 num_rooms <- as.numeric(str_extract(str = substr(more_info, nchar(more_info)-6, nchar(more_info)), pattern = "[:digit:]+"))
+num_rooms
 
 # Scrape for matching nodes, the third one contains hotel class data
 stars <- as.character(html_nodes(hotel_url, '.is-6+ .is-6 .hotels-hotel-review-about-with-photos-layout-TextItem__textitem--3CMuR')[3])
 
 # Extract hotel class
 hotel_class <- paste(substr(str_extract(stars, pattern = "_[:digit:]+"), 2, 2), ".", substr(str_extract(stars, pattern = "_[:digit:]+"), 3, 3), sep = "")
+hotel_class
 
 # Collect all the scraped data into a df
 
