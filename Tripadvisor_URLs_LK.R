@@ -7,14 +7,15 @@ library(magrittr)
 library(stringr)
 
 # URL we want to scrape
-url <- 'https://www.tripadvisor.com/Hotels-g34439-oa0-Miami_Beach_Florida-Hotels.html'
+url <- 'https://www.tripadvisor.com/Hotels-g34345-Key_West_Florida_Keys_Florida-Hotels.html'
 
-# Split the URL before the page iterator
-beg_url <- "https://www.tripadvisor.com/Hotels-g34439-oa"
+# Split the URL before the page iterator, remember to have "-oa" at the end
+beg_url <- "https://www.tripadvisor.com/Hotels-g34345-oa"
+beg_url
 
 # And after the page iterator
-end_url <- "-Miami_Beach_Florida-Hotels.html"
-
+end_url <- "-Key_West_Florida_Keys_Florida-Hotels.html"
+end_url
 # Read the HTML code from the site
 webpage <- read_html(url)
 
@@ -70,6 +71,7 @@ for (row in 1:nrow(urls_df)) {
 }
 
 all_urls <- drop_na(all_urls)
+all_urls
 
 # Export a CSV with the URLs you need
 write.csv(all_urls, file = "All_URLS.csv")
