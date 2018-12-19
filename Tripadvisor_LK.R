@@ -18,7 +18,8 @@ URLs_test <- read_csv("~/Tripadvisor Scraping/URLs_test.csv")
 length(URLs_test$Complete_URL)
 
 # Create a blank df to be filled later:
-hotel_data <- data.frame(Hotel_Name = NA)
+hotel_data <- data.frame(Hotel_Name = NA,
+                         Address = NA)
 
 for (i in 1:length(URLs_test$Complete_URL)) {
 
@@ -50,9 +51,9 @@ more_info
 
 # Extract prices
 price_low <- as.numeric(str_extract(str = more_info, pattern = "[:digit:]+"))
-price_high <- strsplit(strsplit(more_info, "\\$")[[1]][3], " ")[[1]][1]
-price_high <- gsub(",", "", price_high)
-price_high <- as.numeric(price_high)
+#price_high <- strsplit(strsplit(more_info, "\\$")[[1]][3], " ")[[1]][1]
+#price_high <- gsub(",", "", price_high)
+#price_high <- as.numeric(price_high)
 
 #price_low
 #price_high
@@ -71,7 +72,8 @@ hotel_class <- as.numeric(paste(substr(str_extract(stars, pattern = "_[:digit:]+
 
 # Collect all the scraped data into a df
 
-hotel_scrape <- data.frame(Hotel_Name = name)
+hotel_scrape <- data.frame(Hotel_Name = name,
+                           Address = address_info)
 
 hotel_data <- rbind(hotel_data, hotel_scrape)
 
