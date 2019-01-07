@@ -1,31 +1,15 @@
 # Script to scrape a Tripadvisor Hotel record
 
 # Install rvest & load needed packages
-install.packages("rvest")
+#install.packages("rvest")
 library(rvest)
 library(tidyverse)
 library(stringr)
 
 # Read the hotel URL
-tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d80247-Reviews-Holiday_Inn_Miami_Beach-Miami_Beach_Florida.html")
+tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d10587631-Reviews-Urbanica_The_Meridian_Hotel-Miami_Beach_Florida.html")
 
-# Scrape the hotel name
-hotel_name <- tripadv_hotel %>% 
-  html_node("#HEADING") %>% 
-  html_text()
-hotel_name
-
-# Scrape the hotel street address
-street_address <- tripadv_hotel %>% 
-  html_node(".street-address") %>% 
-  html_text()
-street_address
-
-# Scrape the hotel locality
-locality <- tripadv_hotel %>% 
-  html_node(".locality") %>% 
-  html_text()
-locality
+tripadv_hotel_1 <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d87028-Reviews-Eden_Roc_Miami_Beach_Resort-Miami_Beach_Florida.html")
 
 # Scrape the hotel rating
 rating <- tripadv_hotel %>%
@@ -40,11 +24,18 @@ reviews <- tripadv_hotel %>%
   html_node(".reviewCount") %>% 
   html_text() %>% 
   str_split(" ")
+reviews
+reviews <- reviews[[1]][1]
+reviews
+num_reviews <- as.numeric(gsub(",", "", reviews[[1]][1]))
+num_reviews
 
 # Remove extraneous text
 ## TO DO: only do this if the number of reviews is longer than 2
 reviews <- str_split(reviews[[1]][1], ",")
+reviews
 reviews <- paste(reviews[[1]][1], reviews[[1]][2], sep = "")
+reviews
 
 # Change to a number
 num_reviews <- as.numeric(reviews)
@@ -63,6 +54,26 @@ rm_position
 # Subset text
 rm_text <- str_sub(description, start = rk[[3]][1], end = rk[[3]][1]+20)
 rm_text
+
+# Scrape the amenities
+amenities_text <- tripadv_hotel_1 %>% 
+  html_node(".hrAmenitiesSectionWrapper") %>% 
+  html_text()
+amenities_text
+
+unavailable_amenities <- tripadv_hotel_1 %>% 
+  html_nodes(".unavailable") %>% 
+  html_text()
+unavailable_amenities
+
+# Collect all this information in a data frame:
+hotel_record <- data.frame(Hotel_Name = hotel_name,
+                           Street_Address = street_address,
+                           City_State_Zip = locality,
+                           Guest_Rating = rating,
+                           Number_Reviews = num_reviews)
+hotel_record
+
 
 
 
