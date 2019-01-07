@@ -72,6 +72,7 @@ for (row in 1:nrow(urls_df)) {
 
 all_urls <- drop_na(all_urls)
 all_urls
+View(all_urls)
 
 # Export a CSV with the URLs you need
 write.csv(all_urls, file = "All_URLS.csv")
