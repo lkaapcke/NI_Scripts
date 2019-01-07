@@ -89,14 +89,18 @@ hotel_record <- data.frame(Hotel_Name = hotel_name,
 hotel_record
 View(hotel_record)
 
-"Pool" %in% amen
+# Extract price
 
+content <- tripadv_hotel %>%
+  html_nodes(".sub_content") %>% 
+  html_text
+content
 
-if ("Pool" %in% amen) {
-  pool = 1
-} else {
-  pool = 0
-}
-pool
+cont_1 <- tripadv_hotel %>%
+  html_nodes(".is-shown-at-desktop") %>% 
+  html_text
+cont_1
 
-
+str_detect(content, "(Based on Average Rates for a Standard Room)")
+regexpr("(Based on Average Rates for a Standard Room)", content)
+gregexpr("(Based on Average Rates for a Standard Room)", content)
