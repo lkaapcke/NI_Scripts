@@ -66,17 +66,37 @@ unavailable_amenities <- tripadv_hotel_1 %>%
   html_text()
 unavailable_amenities
 
+amen <- tripadv_hotel %>% 
+  html_nodes(".is-6-desktop") %>% 
+  html_text
+amen <- sort(amen, decreasing = F, na.last = T)
+
+no_amen <- tripadv_hotel %>% 
+  html_nodes(".unavailable") %>% 
+  html_text()
+no_amen
+
+
+
+
 # Collect all this information in a data frame:
 hotel_record <- data.frame(Hotel_Name = hotel_name,
                            Street_Address = street_address,
                            City_State_Zip = locality,
                            Guest_Rating = rating,
-                           Number_Reviews = num_reviews)
+                           Number_Reviews = num_reviews,
+                           Pool = pool)
 hotel_record
+View(hotel_record)
+
+"Pool" %in% amen
 
 
-
-
-
+if ("Pool" %in% amen) {
+  pool = 1
+} else {
+  pool = 0
+}
+pool
 
 
