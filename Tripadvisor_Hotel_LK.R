@@ -11,6 +11,8 @@ tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d105
 
 tripadv_hotel_1 <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d87028-Reviews-Eden_Roc_Miami_Beach_Resort-Miami_Beach_Florida.html")
 
+tripadv_hotel_2 <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d7606777-Reviews-1_Hotel_South_Beach-Miami_Beach_Florida.html")
+
 # Scrape the hotel rating
 rating <- tripadv_hotel %>%
   html_nodes(".overallRating") %>% 
@@ -76,9 +78,6 @@ no_amen <- tripadv_hotel %>%
   html_text()
 no_amen
 
-
-
-
 # Collect all this information in a data frame:
 hotel_record <- data.frame(Hotel_Name = hotel_name,
                            Street_Address = street_address,
@@ -91,10 +90,7 @@ View(hotel_record)
 
 # Extract price
 
-content <- tripadv_hotel %>%
-  html_nodes(".sub_content") %>% 
-  html_text
-content
+
 
 cont_1 <- tripadv_hotel %>%
   html_nodes(".is-shown-at-desktop") %>% 
@@ -104,3 +100,35 @@ cont_1
 str_detect(content, "(Based on Average Rates for a Standard Room)")
 regexpr("(Based on Average Rates for a Standard Room)", content)
 gregexpr("(Based on Average Rates for a Standard Room)", content)
+
+# stars, pattern = "_[:digit:]+"
+# pattern = "[:digit:]+"
+
+
+
+content <- tripadv_hotel_2 %>%
+  html_nodes(".sub_content") %>% 
+  html_text
+content
+
+position <- str_which(content, "(Based on Average Rates for a Standard Room)")
+range <- content[[position[[1]][1]]][1]
+prices <- str_split(range, " ")
+
+low <- prices[[1]][1]
+high <- prices[[1]][3]
+
+low <- gsub(",", "", low)
+low <- gsub("\\$", "", low)
+high <- gsub(",", "", high)
+high <- gsub("\\$", "", high)
+
+low_price <- as.numeric(low)
+high_price <- as.numeric(high)
+low_price
+high_price
+
+
+
+
+
