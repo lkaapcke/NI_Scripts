@@ -1,5 +1,11 @@
 # This is a function to retrieve hotel data from a tripadvisor hotel description page.
 
+# Load libraries
+library(rvest)
+library(tidyverse)
+library(stringr)
+library(plyr)
+
 get_hotel_record <- function(tripadv_hotel){
   # Scrape the hotel name
   hotel_name <- tripadv_hotel %>% 
@@ -252,27 +258,33 @@ get_hotel_record <- function(tripadv_hotel){
   
   # Locate row containing price data
   position <- str_which(content, "(Based on Average Rates for a Standard Room)")
-  # Isolate first occurence
-  range <- content[[position[[1]][1]]][1]
-  # Split by spaces
-  prices <- str_split(range, " ")
+  position
+  length(position)
   
-  # Isolate low and high prices
-  low <- prices[[1]][1]
-  high <- prices[[1]][3]
-  
-  # Remove $ and commas
-  low <- gsub(",", "", low)
-  low <- gsub("\\$", "", low)
-  high <- gsub(",", "", high)
-  high <- gsub("\\$", "", high)
-  
-  # Convert to numeric
-  low_price <- as.numeric(low)
-  high_price <- as.numeric(high)
+  if (length(position) > 0) {
+    # Extract the price range
+    range <- content[[position[[1]][1]]][1]
+    # Split by spaces
+    prices <- str_split(range, " ")
+    # Isolate low and high prices
+    low <- prices[[1]][1]
+    high <- prices[[1]][3]
+    # Remove $ and commas
+    low <- gsub(",", "", low)
+    low <- gsub("\\$", "", low)
+    high <- gsub(",", "", high)
+    high <- gsub("\\$", "", high)
+    # Convert to numeric
+    low_price <- as.numeric(low)
+    high_price <- as.numeric(high)
+    low_price
+    high_price
+  } else {
+    low_price = "NA"
+    high_price = "NA"
+  }
   low_price
   high_price
-
   
   # Gather this all into a data frame
   hotel_record <- data.frame(Hotel_Name = hotel_name,
@@ -324,8 +336,6 @@ hotel_urls <- tripadvisor_city_url %>%
 hotel_urls
 
 # Loop through a page of hotels
-library(dplyr)
-
 get_hotels <- function(hotel_urls){
   data = data.frame()
   i = 1
@@ -366,6 +376,17 @@ get_all_hotels <- function(tripadvisor_city_url, X){
 tripadvisor_city_url <- html_session("https://www.tripadvisor.com/Hotels-g34179-Delray_Beach_Florida-Hotels.html")
 
 get_all_hotels(tripadvisor_city_url, 2)
+
+url <- read_html("https://www.tripadvisor.com/Hotel_Review-g34179-d1060138-Reviews-Berkshire_on_the_Ocean-Delray_Beach_Florida.html")
+tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34179-d1060138-Reviews-Berkshire_on_the_Ocean-Delray_Beach_Florida.html")
+get_hotel_record(tripadv_hotel)
+
+# First extract nodes that contain the price range:
+content <- url_1 %>%
+  html_nodes(".sub_content") %>% 
+  html_text
+content
+
 
 
 
