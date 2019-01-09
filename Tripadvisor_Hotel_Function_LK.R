@@ -6,24 +6,29 @@ library(tidyverse)
 library(stringr)
 library(plyr)
 
+tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d15323459-Reviews-Miami_Vice_Suites-Miami_Beach_Florida.html")
+
 get_hotel_record <- function(tripadv_hotel){
+  # Record url of hotel
+  #hotel_url <- tripadv_hotel
+  
   # Scrape the hotel name
   hotel_name <- tripadv_hotel %>% 
     html_node("#HEADING") %>% 
     html_text()
-  #hotel_name
+  hotel_name
   
   # Scrape the hotel street address
   street_address <- tripadv_hotel %>% 
     html_node(".street-address") %>% 
     html_text()
-  #street_address
+  street_address
   
   # Scrape the hotel locality
   locality <- tripadv_hotel %>% 
     html_node(".locality") %>% 
     html_text()
-  #locality
+  locality
   
   # Scrape the hotel rating
   rating <- tripadv_hotel %>%
@@ -32,8 +37,17 @@ get_hotel_record <- function(tripadv_hotel){
     str_trim() %>%
     as.numeric()
   #rating
+
+  if (length(rating) > 0) {
+    rating_1 <- rating
+  } else {
+    rating_1 = "NA"
+  }
+  rating
+  rating_1
   
   # Scrape the number of reviews
+  if (length(rating) > 0) {
   reviews <- tripadv_hotel %>% 
     html_node(".reviewCount") %>% 
     html_text() %>% 
@@ -43,6 +57,10 @@ get_hotel_record <- function(tripadv_hotel){
   # Remove any commas and change this to a number
   num_reviews <- as.numeric(gsub(",", "", reviews[[1]][1]))
   #num_reviews
+  } else {
+    reviews = "NA"
+  }
+  reviews
   
   # Scrape the amenities
   amenities <- tripadv_hotel %>% 
@@ -290,7 +308,7 @@ get_hotel_record <- function(tripadv_hotel){
   hotel_record <- data.frame(Hotel_Name = hotel_name,
                              Street_Address = street_address,
                              City_State_Zip = locality,
-                             Guest_Rating = rating,
+                             Guest_Rating = rating_1,
                              Number_Reviews = num_reviews, 
                              Pool = pool,
                              Bar_Lounge = bar,
@@ -313,29 +331,30 @@ get_hotel_record <- function(tripadv_hotel){
   hotel_record
 }
 
+# Create a few test URLs:
 tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d10587631-Reviews-Urbanica_The_Meridian_Hotel-Miami_Beach_Florida.html")
 
 tripadv_hotel_1 <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d87028-Reviews-Eden_Roc_Miami_Beach_Resort-Miami_Beach_Florida.html")
 
 tripadv_hotel_2 <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d7606777-Reviews-1_Hotel_South_Beach-Miami_Beach_Florida.html")
 
-get_hotel_record(tripadv_hotel)
+# See if the code pulls the records correctly:
 View(get_hotel_record(tripadv_hotel))
 
-get_hotel_record(tripadv_hotel_1)
 View(get_hotel_record(tripadv_hotel_1))
 
 View(get_hotel_record(tripadv_hotel_2))
 
+#####################################
 # Collect all the URLs from a city page:
-tripadvisor_city_url <- read_html("https://www.tripadvisor.com/Hotels-g34179-Delray_Beach_Florida-Hotels.html")
+tripadvisor_city_url <- read_html("https://www.tripadvisor.com/Hotels-g34227-oa180-Fort_Lauderdale_Broward_County_Florida-Hotels.html")
 
 hotel_urls <- tripadvisor_city_url %>%
   html_nodes(".prominent") %>% 
   html_attr('href')
 hotel_urls
 
-# Loop through a page of hotels
+# Collect hotel records for a page of hotels
 get_hotels <- function(hotel_urls){
   data = data.frame()
   i = 1
@@ -343,52 +362,15 @@ get_hotels <- function(hotel_urls){
     tripadv_hotel <- read_html(paste("https://www.tripadvisor.com",hotel_urls[i], sep = ""))
     hotel_record <- get_hotel_record(tripadv_hotel)
     data <- rbind.fill(data, hotel_record)
-    print(i)
+    print(i[1])
   }
   data
 }
+
 
 hotels_df <- get_hotels(hotel_urls)
 View(hotels_df)
 
-# Now to loop through all pages for each city
-########### FIX THIS!
-get_all_hotels <- function(tripadvisor_city_url, X){
-  data <- data.frame()
-  i = 1
-  for(i in 1:X){
-    if(i != 1){ # Go to next page but don't skip the first page
-      next_URL <- tripadvisor_city_url %>%
-        html_nodes(".nav.next") %>%
-        html_attr("href")
-      tripadvisor_city_url <- jump_to(tripadvisor_city_url, paste("https://www.tripadvisor.com", next_URL, sep = ""))
-    }
-    hotel_urls <- tripadvisor_city_url %>%
-      html_nodes(".prominent") %>%
-      html_attr("href")
-    hotels_df <- get_hotels(hotel_urls)
-    data <- rbind.fill(data, hotels_df)
-    print(paste("Page ", i))
-  }
-  data
-}
-
-tripadvisor_city_url <- html_session("https://www.tripadvisor.com/Hotels-g34179-Delray_Beach_Florida-Hotels.html")
-
-get_all_hotels(tripadvisor_city_url, 2)
-
-url <- read_html("https://www.tripadvisor.com/Hotel_Review-g34179-d1060138-Reviews-Berkshire_on_the_Ocean-Delray_Beach_Florida.html")
-tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34179-d1060138-Reviews-Berkshire_on_the_Ocean-Delray_Beach_Florida.html")
-get_hotel_record(tripadv_hotel)
-
-# First extract nodes that contain the price range:
-content <- url_1 %>%
-  html_nodes(".sub_content") %>% 
-  html_text
-content
-
-
-
-
+write.csv(hotels_df, file = "FtLauderdale_Page7.csv")
 
 
