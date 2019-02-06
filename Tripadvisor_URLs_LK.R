@@ -55,7 +55,7 @@ for (page in 1:last_page) {
 }
 
 urls_df <- drop_na(blank_df)
-#View(urls_df)
+View(urls_df)
 
 # Concatenate every row to create the complete URL and put that in a new df
 
