@@ -1,17 +1,21 @@
-# This is a function to retrieve hotel data from a tripadvisor hotel description page.
+# This script was used for data collection for the 2018-19 Bren School Master's Thesis Project Naturally Insured.
+# For more information visit https://naturallyinsured.weebly.com/
+# This script is a collection of 2 functions. One that collects all the URLs for hotels from a tripadvisor hotel overview page. Another that collects data of interest for each of these hotels.
 
 # Load libraries
+install.packages(rvest)
 library(rvest)
+install.packages(tidyverse)
 library(tidyverse)
 library(stringr)
 library(plyr)
 
+# URL to use as a test
 tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d15323459-Reviews-Miami_Vice_Suites-Miami_Beach_Florida.html")
 
+# A function to collect all data for a specific hotel
 get_hotel_record <- function(tripadv_hotel){
-  # Record url of hotel
-  #hotel_url <- tripadv_hotel
-  
+
   # Scrape the hotel name
   hotel_name <- tripadv_hotel %>% 
     html_node("#HEADING") %>% 
@@ -331,30 +335,9 @@ get_hotel_record <- function(tripadv_hotel){
   hotel_record
 }
 
-# Create a few test URLs:
-tripadv_hotel <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d10587631-Reviews-Urbanica_The_Meridian_Hotel-Miami_Beach_Florida.html")
-
-tripadv_hotel_1 <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d87028-Reviews-Eden_Roc_Miami_Beach_Resort-Miami_Beach_Florida.html")
-
-tripadv_hotel_2 <- read_html("https://www.tripadvisor.com/Hotel_Review-g34439-d7606777-Reviews-1_Hotel_South_Beach-Miami_Beach_Florida.html")
-
-# See if the code pulls the records correctly:
-View(get_hotel_record(tripadv_hotel))
-
-View(get_hotel_record(tripadv_hotel_1))
-
-View(get_hotel_record(tripadv_hotel_2))
-
 #####################################
-# Collect all the URLs from a city page:
-tripadvisor_city_url <- read_html("https://www.tripadvisor.com/Hotels-g34227-oa180-Fort_Lauderdale_Broward_County_Florida-Hotels.html")
 
-hotel_urls <- tripadvisor_city_url %>%
-  html_nodes(".prominent") %>% 
-  html_attr('href')
-hotel_urls
-
-# Collect hotel records for a page of hotels
+# This is a function to collect all the hotel URLs from a tripadvisor hotel overview page and then gather hotel data for each
 get_hotels <- function(hotel_urls){
   data = data.frame()
   i = 1
@@ -367,10 +350,11 @@ get_hotels <- function(hotel_urls){
   data
 }
 
-
+# Collect this data into a dataframe
 hotels_df <- get_hotels(hotel_urls)
 View(hotels_df)
 
+# Write this to a .csv file
 write.csv(hotels_df, file = "FtLauderdale_Page7.csv")
 
 
